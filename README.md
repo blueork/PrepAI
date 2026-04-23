@@ -347,30 +347,34 @@ volumes:
 
 ## UI Design Guidelines
 
-### Color Palette — Warm & Lively
-- **Primary background:** Warm off-white `#fdf8f3`
-- **Accent / brand color:** Warm amber-orange `#f59e0b`
-- **Secondary accent:** Deep teal `#0d9488`
-- **Cards/surfaces:** Soft cream `#fef3e2`
-- **Text primary:** Rich dark brown `#1c1917`
-- **Text muted:** Warm gray `#78716c`
-- **Success:** Emerald green `#10b981`
-- **Error:** Warm red `#ef4444`
+### Color Palette — Premium Modern SaaS
+- **Dark Mode Surfaces:** Deep Navy `#0F172A`
+- **Primary Page Background:** Soft Gray/White `#F8FAFC`
+- **Accent Gradients:** Indigo to Violet `#6366F1 → #8B5CF6`
+- **Cards/Surfaces:** Pure White `#FFFFFF`
+- **Text primary:** Dark Charcoal `#111827`
+- **Text muted:** Subtle Gray `#6B7280`
+- **Success/Easy:** Emerald Green `emerald-600`
+- **Warning/Medium:** Amber `amber-600`
+- **Error/Hard:** Rose Red `rose-600`
 
 ### Pages & Components
 
 #### Landing Page (`/`)
-- Full-screen hero with headline: **"Practice. Get Feedback. Get Hired."**
-- Animated typewriter effect cycling through job roles
-- Two CTA buttons: "Start Practicing" (primary) and "Login"
+- Full-screen hero with headline: **"Practice Smarter. Get Hired Faster."**
+- Background: Soft indigo-to-violet gradient
+- Two CTA buttons: "Start Practicing" (vibrant gradient) and "Login" (outline)
 - Three feature cards below: Smart Questions / Instant Feedback / Track Progress
-- Warm gradient background (amber to orange tones)
+
+#### Navigation & Auth
+- **Global Navbar:** Locked top navigation in Deep Navy `#0F172A` with gradient brain icon.
+- **Login / Signup:** Premium split-screen layout. Left side features deep navy with animated glowing orbs. Right side features minimalistic forms with gradient CTAs and micro-interactions.
 
 #### Dashboard (`/dashboard`)
-- Greeting: "Welcome back, {name} 👋"
-- **Start New Interview** card — prominent, with role selector dropdown and difficulty toggle (Easy / Medium / Hard)
-- **Past Interviews** section — cards showing: role, date, overall score with colored badge (green ≥70, yellow 50–69, red <50)
-- Empty state illustration when no interviews yet
+- Greeting: "Welcome Back."
+- **Start New Interview** — Sleek card with role input and difficulty dropdown (Easy / Medium / Hard). 
+- **Past Interviews** — Scrollable history list of cards. Cards feature hover states, date/time info, and dynamically colored difficulty + score badges.
+- Empty state illustration indicating a user should start their first practice.
 
 #### Interview Screen (`/interview/[id]`)
 - Progress bar at top showing "Question 3 of 5"
