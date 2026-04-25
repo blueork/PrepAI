@@ -2,20 +2,23 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
 resources:
-  - secrets.yml
-  - db-deployment.yml
-  - db-service.yml
-  - auth-deployment.yml
-  - auth-service.yml
-  - backend-deployment.yml
-  - backend-service.yml
-  - frontend-deployment.yml
-  - frontend-service.yml
+- secrets.yml
+- db-deployment.yml
+- db-service.yml
+- auth-deployment.yml
+- auth-service.yml
+- backend-deployment.yml
+- backend-service.yml
+- frontend-deployment.yml
+- frontend-service.yml
 
 images:
-  - name: 22i0789/prepai-frontend
-    newTag: latest
-  - name: 22i0789/prepai-backend
-    newTag: latest
-  - name: 22i0789/prepai-auth-service
-    newTag: latest
+- name: 22i0789/prepai-auth-service
+  newName: 22i0789/prepai-auth-service
+  newTag: 4e72ccb916c1850f83abc16a16bb7c9dd406f136
+- name: 22i0789/prepai-backend
+  newName: 22i0789/prepai-backend
+  newTag: 4e72ccb916c1850f83abc16a16bb7c9dd406f136
+- name: 22i0789/prepai-frontend
+  newName: 22i0789/prepai-frontend
+  newTag: 4e72ccb916c1850f83abc16a16bb7c9dd406f136
