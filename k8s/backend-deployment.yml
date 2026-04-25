@@ -31,3 +31,8 @@ spec:
                 secretKeyRef:
                   name: prepai-secrets
                   key: OPENAI_API_KEY
+            - name: SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: prepai-secrets
+                  key: SECRET_KEY
