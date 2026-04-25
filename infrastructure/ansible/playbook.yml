@@ -1,0 +1,59 @@
+---
+- name: Configure Kubernetes Node
+  hosts: k8s_nodes
+  become: yes
+  tasks:
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+        cache_valid_time: 3600
+
+    - name: Install required packages
+      apt:
+        name:
+          - apt-transport-https
+          - ca-certificates
+          - curl
+          - software-properties-common
+          - git
+        state: present
+
+    - name: Install Docker
+      apt:
+        name: docker.io
+        state: present
+
+    - name: Enable and start Docker service
+      systemd:
+        name: docker
+        enabled: yes
+        state: started
+
+    - name: Add ubuntu user to docker group
+      user:
+        name: ubuntu
+        groups: docker
+        append: yes
+
+    - name: Install microk8s via snap
+      snap:
+        name: microk8s
+        classic: yes
+
+    - name: Add ubuntu user to microk8s group
+      user:
+        name: ubuntu
+        groups: microk8s
+        append: yes
+        
+    - name: Wait for microk8s to be ready
+      command: microk8s status --wait-ready
+      changed_when: false
+
+    - name: Enable microk8s addons
+      command: microk8s enable dns ingress hostpath-storage
+      ignore_errors: yes
+
+    - name: Alias kubectl to microk8s.kubectl
+      command: snap alias microk8s.kubectl kubectl
+      ignore_errors: yes
