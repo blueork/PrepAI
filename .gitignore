@@ -36,3 +36,9 @@ mockinterview.db
 *.swp
 *.swo
 .DS_Store
+
+.terraform
+*.tfstate
+*.tfstate.*
+crash.log
+crash.*.log
