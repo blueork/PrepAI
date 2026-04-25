@@ -15,10 +15,10 @@ resources:
 images:
 - name: 22i0789/prepai-auth-service
   newName: 22i0789/prepai-auth-service
-  newTag: 476aefbbf3ab2a1bd72ec3e53fc4f0a4a2f5dc82
+  newTag: c546f99d5235877ab1b94443374727922f6ff9d2
 - name: 22i0789/prepai-backend
   newName: 22i0789/prepai-backend
-  newTag: 476aefbbf3ab2a1bd72ec3e53fc4f0a4a2f5dc82
+  newTag: c546f99d5235877ab1b94443374727922f6ff9d2
 - name: 22i0789/prepai-frontend
   newName: 22i0789/prepai-frontend
-  newTag: 476aefbbf3ab2a1bd72ec3e53fc4f0a4a2f5dc82
+  newTag: c546f99d5235877ab1b94443374727922f6ff9d2
