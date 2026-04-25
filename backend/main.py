@@ -1,8 +1,12 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from routers import sessions_router, answers_router
+import models
+from database import engine
 
 app = FastAPI(title="AI Mock Interviewer API")
+
+models.Base.metadata.create_all(bind=engine)
 
 origins = ["*"]
 

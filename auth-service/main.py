@@ -6,7 +6,11 @@ import schemas
 from auth import get_db, get_password_hash, verify_password, create_access_token, ACCESS_TOKEN_EXPIRE_MINUTES
 from datetime import timedelta
 
+from database import engine
+
 app = FastAPI(title="AI Mock Interviewer - Auth Service")
+
+models.Base.metadata.create_all(bind=engine)
 
 origins = ["*"]
 
