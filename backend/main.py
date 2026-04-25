@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from routers import auth_router, sessions_router, answers_router
+from routers import sessions_router, answers_router
 
 app = FastAPI(title="AI Mock Interviewer API")
 
@@ -21,6 +21,5 @@ app.add_middleware(
 def health_check():
     return {"status": "healthy"}
 
-app.include_router(auth_router.router)
 app.include_router(sessions_router.router)
 app.include_router(answers_router.router)

@@ -8,6 +8,13 @@ const api = axios.create({
   },
 });
 
+const authApi = axios.create({
+  baseURL: process.env.NEXT_PUBLIC_AUTH_URL || 'http://localhost:8001',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
+
 api.interceptors.request.use((config) => {
   const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
   if (token) {
@@ -18,12 +25,12 @@ api.interceptors.request.use((config) => {
 
 export const auth = {
   login: async (email, password) => {
-    const res = await api.post('/auth/login', { email, password });
+    const res = await authApi.post('/auth/login', { email, password });
     if (typeof window !== 'undefined') localStorage.setItem('token', res.data.access_token);
     return res.data;
   },
   signup: async (name, email, password) => {
-    const res = await api.post('/auth/signup', { name, email, password });
+    const res = await authApi.post('/auth/signup', { name, email, password });
     return res.data;
   },
   logout: () => {

@@ -1,13 +1,31 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import FastAPI, Depends, HTTPException, status
+from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 import models
 import schemas
 from auth import get_db, get_password_hash, verify_password, create_access_token, ACCESS_TOKEN_EXPIRE_MINUTES
 from datetime import timedelta
 
-router = APIRouter(prefix="/auth", tags=["auth"])
+app = FastAPI(title="AI Mock Interviewer - Auth Service")
 
-@router.post("/signup", response_model=schemas.UserResponse)
+# Update origins for production
+origins = [
+    "http://localhost:3000",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+@app.get("/health")
+def health_check():
+    return {"status": "auth-service healthy"}
+
+@app.post("/auth/signup", response_model=schemas.UserResponse)
 def signup(user: schemas.UserCreate, db: Session = Depends(get_db)):
     db_user = db.query(models.User).filter(models.User.email == user.email).first()
     if db_user:
@@ -20,10 +38,8 @@ def signup(user: schemas.UserCreate, db: Session = Depends(get_db)):
     db.refresh(new_user)
     return new_user
 
-@router.post("/login", response_model=schemas.Token)
+@app.post("/auth/login", response_model=schemas.Token)
 def login(user_credentials: schemas.UserLogin, db: Session = Depends(get_db)):
-    # Using UserLogin schema here for simplify since front-end passes JSON {email, password}
-    # Standard OAuth2PasswordRequestForm expects form data, but app requested JSON {email, password} based on README
     user = db.query(models.User).filter(models.User.email == user_credentials.email).first()
     if not user:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Invalid Credentials")
