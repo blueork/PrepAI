@@ -194,3 +194,4 @@ Whenever you push code to the `master` branch:
 Once ArgoCD finishes deploying the pods, the application is live!
 Open your browser and navigate to:
 **`http://<YOUR_EC2_PUBLIC_IP>:30002`**
+
