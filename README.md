@@ -195,3 +195,45 @@ Once ArgoCD finishes deploying the pods, the application is live!
 Open your browser and navigate to:
 **`http://<YOUR_EC2_PUBLIC_IP>:30002`**
 
+Some relevant commands:
+```bash
+# create 
+terraform init
+terraform apply -auto-approve
+
+# Change public IP address (if changed)
+EC2_PUBLIC_IP="<NEW_IP>"      # Update in GitHub Repo Settings
+
+# Restart playbook
+ansible-playbook -i inventory.ini playbook.yml
+
+# Clean up everything
+terraform destroy
+
+kubectl rollout restart deployment prepai-backend
+kubectl logs -l app=backend
+kubectl logs -l app=postgres
+kubectl logs -l app=auth-service
+
+
+
+ssh -i ~/.ssh/id_rsa ubuntu@<IP_Address>
+nano secrets.yml
+kubectl apply -f secrets.yml
+kubectl create namespace argocd
+kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+kubectl apply -f https://raw.githubusercontent.com/blueork/PrepAI/main/k8s/argocd-app.yml
+kubectl get pods -w
+kubectl apply -f https://raw.githubusercontent.com/blueork/PrepAI/master/k8s/argocd-app.yml
+kubectl get application prepai-app -n argocd
+
+
+# 1. Clone your repo onto the EC2 server (it will ask for your GitHub username/password)
+git clone https://github.com/blueork/PrepAI.git
+
+# 2. Tell Kubernetes to apply everything in the k8s folder!
+kubectl apply -k PrepAI/k8s/
+kubectl get application prepai-app -n argocd
+
+
+```
