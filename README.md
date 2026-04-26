@@ -1,5 +1,9 @@
 # PrepAI - AI Mock Interviewer
 
+Submitted By:
+M. Zubair Adnan i220789 A
+Ahmed Naveed i221132 A
+
 A sleek, full-stack AI-powered mock interview platform. PrepAI allows users to practice role-specific technical interviews, receive instant AI-generated feedback, and visually track their progress over time across different difficulties.
 
 Built with a modern stack featuring Next.js 14, Framer Motion, FastAPI, PostgreSQL, and OpenAI's GPT-4o.
@@ -108,3 +112,85 @@ npm run dev
 ### 4. Visit the Application
 - Application: `http://localhost:3000`
 - Backend API Docs (Swagger / OpenAPI): `http://localhost:8000/docs`
+
+---
+
+## 🏗️ Cloud-Native Architecture (Production)
+
+This project has been refactored from a local monolithic application into a **Production-Grade, Cloud-Native Microservices Architecture** deployed on AWS using a fully automated GitOps CI/CD pipeline.
+
+PrepAI is built on a modern DevOps stack designed for scalability, reliability, and zero-touch automation.
+
+| Layer | Technology | Purpose |
+|-------|-----------|---------|
+| **Frontend** | Next.js 14, Tailwind, React | Static client-side UI bundled into an Nginx container. |
+| **Auth Service** | FastAPI (Python) | Dedicated microservice handling JWT creation, hashing, and signup/login routing. |
+| **Core Backend** | FastAPI (Python) | Dedicated microservice handling OpenAI integrations, session tracking, and evaluations. |
+| **Database** | PostgreSQL 15 | Relational data storage, attached to a Kubernetes Persistent Volume. |
+| **Infrastructure**| Terraform (AWS) | IaC provisioning of a custom VPC, Public Subnet, Internet Gateway, and an EC2 instance. |
+| **Configuration**| Ansible | Automated server configuration, installing Docker, MicroK8s, and securely transferring secrets. |
+| **CI/CD (Build)**| GitHub Actions | Continuous Integration pipeline that builds Docker images and dynamically updates Kustomize tags. |
+| **GitOps (Deploy)**| ArgoCD & Kubernetes | Continuous Deployment controller that watches GitHub and automatically syncs the cluster state. |
+
+---
+
+## 🚀 Zero-Touch Deployment Pipeline
+
+The entire AWS infrastructure and Kubernetes cluster can be provisioned and deployed automatically with zero manual server configuration.
+
+### Prerequisites
+1. AWS CLI configured with administrator access.
+2. Terraform, Ansible, and Docker installed on your local machine.
+3. An OpenAI API Key.
+4. A Docker Hub account with Repository Secrets configured in GitHub (`DOCKERHUB_USERNAME`, `DOCKERHUB_TOKEN`, `EC2_PUBLIC_IP`).
+
+### Step 1: Secure Your Secrets
+Create a file locally at `k8s/actual_secrets.yml` to hold your production keys. (This file is ignored by Git for security).
+```yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: prepai-secrets
+type: Opaque
+stringData:
+  DB_USER: "postgres"
+  DB_PASSWORD: "secure-password"
+  DB_NAME: "mockinterview"
+  DATABASE_URL: "postgresql://postgres:secure-password@postgres-db:5432/mockinterview"
+  OPENAI_API_KEY: "sk-your-real-api-key"
+  SECRET_KEY: "your-highly-secure-jwt-secret-string"
+```
+
+### Step 2: Provision Infrastructure (Terraform)
+Navigate to the `infrastructure/terraform` directory and apply the AWS configuration.
+```bash
+cd infrastructure/terraform
+terraform init
+terraform apply -auto-approve
+```
+*Take note of the EC2 Public IP outputted at the end of this process.*
+
+### Step 3: Configure Server & Kubernetes (Ansible)
+1. Update `infrastructure/ansible/inventory.ini` with your new EC2 Public IP address.
+2. In your GitHub repository settings, update the `EC2_PUBLIC_IP` Repository Secret so the Frontend can build its dynamic routes.
+3. Run the Ansible playbook from your local machine:
+```bash
+cd infrastructure/ansible
+ansible-playbook -i inventory.ini playbook.yml
+```
+*This playbook installs Kubernetes, securely copies your local `actual_secrets.yml` to the server vault, installs ArgoCD, and connects the cluster to GitHub.*
+
+### Step 4: GitOps Automation (GitHub Actions & ArgoCD)
+Whenever you push code to the `master` branch:
+1. **GitHub Actions** builds the new Next.js, Auth, and Backend Docker images.
+2. The Action pushes the images to Docker Hub tagged with the Git commit hash.
+3. The Action uses `Kustomize` to update the `k8s/kustomization.yml` file with the new image tags and commits the change back to GitHub.
+4. **ArgoCD**, running inside the EC2 cluster, detects the change in GitHub and automatically pulls the new Docker images, gracefully restarting the Pods without downtime.
+
+---
+
+## 🌐 Accessing the Application
+
+Once ArgoCD finishes deploying the pods, the application is live!
+Open your browser and navigate to:
+**`http://<YOUR_EC2_PUBLIC_IP>:30002`**
