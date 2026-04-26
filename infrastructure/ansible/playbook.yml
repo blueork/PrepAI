@@ -1,7 +1,7 @@
 ---
 - name: Configure Kubernetes Node
   hosts: k8s_nodes
-  become: yes
+  become: true
   tasks:
     - name: Update apt cache
       apt:
@@ -45,15 +45,41 @@
         name: ubuntu
         groups: microk8s
         append: yes
-        
+
     - name: Wait for microk8s to be ready
       command: microk8s status --wait-ready
       changed_when: false
 
     - name: Enable microk8s addons
       command: microk8s enable dns ingress hostpath-storage
-      ignore_errors: yes
+      ignore_errors: true
 
     - name: Alias kubectl to microk8s.kubectl
       command: snap alias microk8s.kubectl kubectl
-      ignore_errors: yes
+      ignore_errors: true
+
+    - name: Copy secrets file to server securely
+      copy:
+        src: ../../k8s/actual_secrets.yml
+        dest: /tmp/secrets.yml
+        mode: "0600"
+
+    - name: Apply Kubernetes secrets
+      command: microk8s kubectl apply -f /tmp/secrets.yml
+
+    - name: Clean up secrets file from server
+      file:
+        path: /tmp/secrets.yml
+        state: absent
+
+    - name: Create ArgoCD namespace
+      command: microk8s kubectl create namespace argocd
+      ignore_errors: true
+
+    - name: Install ArgoCD
+      command: microk8s kubectl apply -n argocd --server-side --force-conflicts -f
+        https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+
+    - name: Link cluster to GitHub (Apply ArgoCD App Config)
+      command: microk8s kubectl apply -f
+        https://raw.githubusercontent.com/blueork/PrepAI/master/k8s/argocd-app.yml
