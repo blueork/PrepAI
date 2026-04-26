@@ -43,3 +43,4 @@ mockinterview.db
 crash.log
 crash.*.log
 k8s/secrets.yml
+k8s/actual_secrets.yml
